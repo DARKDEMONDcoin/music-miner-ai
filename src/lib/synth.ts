@@ -64,8 +64,9 @@ export class TrackPlayer {
         this.tone(ctx, master, midiToFreq(n), t0, bar * 0.98, 0.09, "sawtooth", 1200);
       }
       // bass
-      this.tone(ctx, master, midiToFreq(chordNotes(chord)[0] - 12), t0, beat * 0.9, 0.22, "triangle", 400);
-      this.tone(ctx, master, midiToFreq(chordNotes(chord)[0] - 12), t0 + beat * 2, beat * 0.9, 0.18, "triangle", 400);
+      const bassFreq = midiToFreq((chordNotes(chord)[0] ?? 48) - 12);
+      this.tone(ctx, master, bassFreq, t0, beat * 0.9, 0.22, "triangle", 400);
+      this.tone(ctx, master, bassFreq, t0 + beat * 2, beat * 0.9, 0.18, "triangle", 400);
       // drums
       for (let s = 0; s < 8; s++) {
         const t = t0 + s * (beat / 2);
