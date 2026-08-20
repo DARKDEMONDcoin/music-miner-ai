@@ -11,10 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AiRouteImport } from './routes/ai'
-import { Route as ReferralRouteImport } from './routes/referral'
-import { Route as ShopRouteImport } from './routes/shop'
 import { Route as StudioRouteImport } from './routes/studio'
 import { Route as TasksRouteImport } from './routes/tasks'
+import { Route as WalletRouteImport } from './routes/wallet'
 import { Route as ApiAiComposeRouteImport } from './routes/api/ai/compose'
 import { Route as ApiAiCoverRouteImport } from './routes/api/ai/cover'
 import { Route as ApiTelegramInvoiceRouteImport } from './routes/api/telegram/invoice'
@@ -31,16 +30,6 @@ const AiRoute = AiRouteImport.update({
   path: '/ai',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ReferralRoute = ReferralRouteImport.update({
-  id: '/referral',
-  path: '/referral',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ShopRoute = ShopRouteImport.update({
-  id: '/shop',
-  path: '/shop',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const StudioRoute = StudioRouteImport.update({
   id: '/studio',
   path: '/studio',
@@ -49,6 +38,11 @@ const StudioRoute = StudioRouteImport.update({
 const TasksRoute = TasksRouteImport.update({
   id: '/tasks',
   path: '/tasks',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WalletRoute = WalletRouteImport.update({
+  id: '/wallet',
+  path: '/wallet',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAiComposeRoute = ApiAiComposeRouteImport.update({
@@ -81,10 +75,9 @@ const ApiPublicTelegramWebhookRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ai': typeof AiRoute
-  '/referral': typeof ReferralRoute
-  '/shop': typeof ShopRoute
   '/studio': typeof StudioRoute
   '/tasks': typeof TasksRoute
+  '/wallet': typeof WalletRoute
   '/api/ai/compose': typeof ApiAiComposeRoute
   '/api/ai/cover': typeof ApiAiCoverRoute
   '/api/telegram/invoice': typeof ApiTelegramInvoiceRoute
@@ -94,10 +87,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ai': typeof AiRoute
-  '/referral': typeof ReferralRoute
-  '/shop': typeof ShopRoute
   '/studio': typeof StudioRoute
   '/tasks': typeof TasksRoute
+  '/wallet': typeof WalletRoute
   '/api/ai/compose': typeof ApiAiComposeRoute
   '/api/ai/cover': typeof ApiAiCoverRoute
   '/api/telegram/invoice': typeof ApiTelegramInvoiceRoute
@@ -108,10 +100,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/ai': typeof AiRoute
-  '/referral': typeof ReferralRoute
-  '/shop': typeof ShopRoute
   '/studio': typeof StudioRoute
   '/tasks': typeof TasksRoute
+  '/wallet': typeof WalletRoute
   '/api/ai/compose': typeof ApiAiComposeRoute
   '/api/ai/cover': typeof ApiAiCoverRoute
   '/api/telegram/invoice': typeof ApiTelegramInvoiceRoute
@@ -123,10 +114,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/ai'
-    | '/referral'
-    | '/shop'
     | '/studio'
     | '/tasks'
+    | '/wallet'
     | '/api/ai/compose'
     | '/api/ai/cover'
     | '/api/telegram/invoice'
@@ -136,10 +126,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/ai'
-    | '/referral'
-    | '/shop'
     | '/studio'
     | '/tasks'
+    | '/wallet'
     | '/api/ai/compose'
     | '/api/ai/cover'
     | '/api/telegram/invoice'
@@ -149,10 +138,9 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/ai'
-    | '/referral'
-    | '/shop'
     | '/studio'
     | '/tasks'
+    | '/wallet'
     | '/api/ai/compose'
     | '/api/ai/cover'
     | '/api/telegram/invoice'
@@ -163,10 +151,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AiRoute: typeof AiRoute
-  ReferralRoute: typeof ReferralRoute
-  ShopRoute: typeof ShopRoute
   StudioRoute: typeof StudioRoute
   TasksRoute: typeof TasksRoute
+  WalletRoute: typeof WalletRoute
   ApiAiComposeRoute: typeof ApiAiComposeRoute
   ApiAiCoverRoute: typeof ApiAiCoverRoute
   ApiTelegramInvoiceRoute: typeof ApiTelegramInvoiceRoute
@@ -190,20 +177,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AiRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/referral': {
-      id: '/referral'
-      path: '/referral'
-      fullPath: '/referral'
-      preLoaderRoute: typeof ReferralRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/shop': {
-      id: '/shop'
-      path: '/shop'
-      fullPath: '/shop'
-      preLoaderRoute: typeof ShopRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/studio': {
       id: '/studio'
       path: '/studio'
@@ -216,6 +189,13 @@ declare module '@tanstack/react-router' {
       path: '/tasks'
       fullPath: '/tasks'
       preLoaderRoute: typeof TasksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wallet': {
+      id: '/wallet'
+      path: '/wallet'
+      fullPath: '/wallet'
+      preLoaderRoute: typeof WalletRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/ai/compose': {
@@ -259,10 +239,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AiRoute: AiRoute,
-  ReferralRoute: ReferralRoute,
-  ShopRoute: ShopRoute,
   StudioRoute: StudioRoute,
   TasksRoute: TasksRoute,
+  WalletRoute: WalletRoute,
   ApiAiComposeRoute: ApiAiComposeRoute,
   ApiAiCoverRoute: ApiAiCoverRoute,
   ApiTelegramInvoiceRoute: ApiTelegramInvoiceRoute,
