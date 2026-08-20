@@ -9,12 +9,16 @@ import {
 } from "react";
 import {
   INSTRUMENTS,
+  MINERS,
   STORAGE_KEY,
   initialState,
+  minerPending,
+  minerUpgradeCost,
   pending,
   todayStamp,
   upgradeCost,
   type GameState,
+  type MinerId,
   type Track,
 } from "@/lib/game";
 
@@ -22,15 +26,17 @@ type Ctx = {
   state: GameState;
   now: number;
   ready: boolean;
-  collect: () => number;
+  collect: () => { music: number; gram: number; usdt: number };
   upgrade: (id: string) => boolean;
+  upgradeMiner: (id: MinerId) => boolean;
   claimTask: (id: string, reward: number) => void;
   addTrack: (t: Track) => void;
   grant: (amount: number) => void;
-  buy: (kind: "premium" | "booster" | "coins", amount?: number) => void;
+  buy: (kind: "premium" | "booster" | "coins" | "gram" | "usdt", amount?: number) => void;
   addReferral: () => void;
   reset: () => void;
 };
+
 
 const GameCtx = createContext<Ctx | null>(null);
 
@@ -71,13 +77,18 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const collect = useCallback(() => {
-    let gained = 0;
+    let gained = { music: 0, gram: 0, usdt: 0 };
     setState((s) => {
-      gained = pending(s);
-      if (gained <= 0) return s;
+      const music = pending(s);
+      const gram = minerPending(s, MINERS[0]!);
+      const usdt = minerPending(s, MINERS[1]!);
+      if (music <= 0 && gram <= 0 && usdt <= 0) return s;
+      gained = { music, gram, usdt };
       return {
         ...s,
-        balance: s.balance + gained,
+        balance: s.balance + music,
+        gram: s.gram + gram,
+        usdt: s.usdt + usdt,
         lastCollectAt: Date.now(),
         collectsToday: s.collectsToday + 1,
       };
@@ -103,6 +114,25 @@ export function GameProvider({ children }: { children: ReactNode }) {
     return ok;
   }, []);
 
+  const upgradeMiner = useCallback((id: MinerId) => {
+    let ok = false;
+    setState((s) => {
+      const miner = MINERS.find((m) => m.id === id);
+      if (!miner) return s;
+      const level = s.minerLevels[id] ?? 0;
+      const cost = minerUpgradeCost(miner, level);
+      if (s.balance < cost) return s;
+      ok = true;
+      return {
+        ...s,
+        balance: s.balance - cost,
+        minerLevels: { ...s.minerLevels, [id]: level + 1 },
+      };
+    });
+    return ok;
+  }, []);
+
+
   const claimTask = useCallback((id: string, reward: number) => {
     setState((s) =>
       s.claimedTasks.includes(id)
@@ -119,15 +149,22 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setState((s) => ({ ...s, balance: s.balance + amount }));
   }, []);
 
-  const buy = useCallback((kind: "premium" | "booster" | "coins", amount = 0) => {
-    setState((s) => {
-      if (kind === "premium")
-        return { ...s, premiumUntil: Math.max(s.premiumUntil, Date.now()) + 30 * 86_400_000 };
-      if (kind === "booster")
-        return { ...s, boosterUntil: Math.max(s.boosterUntil, Date.now()) + 8 * 3_600_000 };
-      return { ...s, balance: s.balance + amount };
-    });
-  }, []);
+  const buy = useCallback(
+    (kind: "premium" | "booster" | "coins" | "gram" | "usdt", amount = 0) => {
+      setState((s) => {
+        if (kind === "premium")
+          return { ...s, premiumUntil: Math.max(s.premiumUntil, Date.now()) + 30 * 86_400_000 };
+        if (kind === "booster")
+          return { ...s, boosterUntil: Math.max(s.boosterUntil, Date.now()) + 8 * 3_600_000 };
+        if (kind === "gram")
+          return { ...s, minerLevels: { ...s.minerLevels, gram: (s.minerLevels["gram"] ?? 0) + amount } };
+        if (kind === "usdt")
+          return { ...s, minerLevels: { ...s.minerLevels, usdt: (s.minerLevels["usdt"] ?? 0) + amount } };
+        return { ...s, balance: s.balance + amount };
+      });
+    },
+    [],
+  );
 
   const addReferral = useCallback(() => {
     setState((s) => ({ ...s, referrals: s.referrals + 1, balance: s.balance + 1000 }));
@@ -136,9 +173,36 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const reset = useCallback(() => setState(initialState()), []);
 
   const value = useMemo(
-    () => ({ state, now, ready, collect, upgrade, claimTask, addTrack, grant, buy, addReferral, reset }),
-    [state, now, ready, collect, upgrade, claimTask, addTrack, grant, buy, addReferral, reset],
+    () => ({
+      state,
+      now,
+      ready,
+      collect,
+      upgrade,
+      upgradeMiner,
+      claimTask,
+      addTrack,
+      grant,
+      buy,
+      addReferral,
+      reset,
+    }),
+    [
+      state,
+      now,
+      ready,
+      collect,
+      upgrade,
+      upgradeMiner,
+      claimTask,
+      addTrack,
+      grant,
+      buy,
+      addReferral,
+      reset,
+    ],
   );
+
 
   return <GameCtx.Provider value={value}>{children}</GameCtx.Provider>;
 }

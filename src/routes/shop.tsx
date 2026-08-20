@@ -44,10 +44,13 @@ function ShopPage() {
     else if (id === "booster") buy("booster");
     else if (id === "coins") buy("coins", 250_000);
     else if (id === "tracks10") buy("coins", 0);
+    else if (id === "gram-rig") buy("gram", 5);
+    else if (id === "usdt-rig") buy("usdt", 5);
     else if (id === "mega") {
       buy("premium");
       buy("booster");
       buy("coins", 1_000_000);
+      buy("gram", 3);
     }
     telegram()?.HapticFeedback?.notificationOccurred?.("success");
     toast.success("Purchase unlocked", { description: "Your studio has been upgraded." });
@@ -90,8 +93,8 @@ function ShopPage() {
     openExternal(tonkeeperLink(item.ton, memo));
     setBusy(`${item.id}-ton`);
     cancelled.current = false;
-    toast("Waiting for your TON transfer", {
-      description: `Send ${item.ton} TON with comment ${memo}`,
+    toast("Waiting for your GRAM transfer", {
+      description: `Send ${item.ton} GRAM with comment ${memo}`,
     });
 
     for (let i = 0; i < 40; i++) {
@@ -120,7 +123,7 @@ function ShopPage() {
         <p className="text-sm">
           {isPremium(state) ? "Premium is active" : "Level up your studio faster"}
         </p>
-        <p className="mt-1 text-[11px] text-foreground/60">Pay with Telegram Stars or a TON wallet</p>
+        <p className="mt-1 text-[11px] text-foreground/60">Pay with Telegram Stars or GRAM on TON</p>
         <p className="mt-3 truncate rounded-lg bg-white/10 px-3 py-2 text-[10px] text-foreground/60">
           {TON_WALLET}
         </p>
@@ -167,7 +170,7 @@ function ShopPage() {
                 className="flex items-center justify-center gap-1.5 rounded-xl bg-blue-700 py-2.5 text-xs transition-transform duration-200 hover:scale-105 active:scale-95 disabled:opacity-50"
               >
                 {tonBusy ? <Loader2 size={13} className="animate-spin" /> : <Gem size={13} strokeWidth={2} />}
-                {item.ton} TON
+                {item.ton} GRAM
               </button>
             </div>
             {tonBusy && (
