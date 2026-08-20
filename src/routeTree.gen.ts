@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiAiComposeRouteImport } from './routes/api/ai/compose'
+import { Route as ApiAiCoverRouteImport } from './routes/api/ai/cover'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAiComposeRoute = ApiAiComposeRouteImport.update({
+  id: '/api/ai/compose',
+  path: '/api/ai/compose',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAiCoverRoute = ApiAiCoverRouteImport.update({
+  id: '/api/ai/cover',
+  path: '/api/ai/cover',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/ai/compose': typeof ApiAiComposeRoute
+  '/api/ai/cover': typeof ApiAiCoverRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/ai/compose': typeof ApiAiComposeRoute
+  '/api/ai/cover': typeof ApiAiCoverRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/ai/compose': typeof ApiAiComposeRoute
+  '/api/ai/cover': typeof ApiAiCoverRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/api/ai/compose' | '/api/ai/cover'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/api/ai/compose' | '/api/ai/cover'
+  id: '__root__' | '/' | '/api/ai/compose' | '/api/ai/cover'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiAiComposeRoute: typeof ApiAiComposeRoute
+  ApiAiCoverRoute: typeof ApiAiCoverRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +68,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/ai/compose': {
+      id: '/api/ai/compose'
+      path: '/api/ai/compose'
+      fullPath: '/api/ai/compose'
+      preLoaderRoute: typeof ApiAiComposeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/ai/cover': {
+      id: '/api/ai/cover'
+      path: '/api/ai/cover'
+      fullPath: '/api/ai/cover'
+      preLoaderRoute: typeof ApiAiCoverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiAiComposeRoute: ApiAiComposeRoute,
+  ApiAiCoverRoute: ApiAiCoverRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
