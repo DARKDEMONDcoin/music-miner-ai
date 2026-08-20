@@ -31,7 +31,7 @@ export function UsdtIcon({ size = 20, className = "" }: Props) {
   );
 }
 
-export function CoinIcon({ id, size, className }: Props & { id: string }) {
+export function CoinIcon({ id, size = 20, className = "" }: Props & { id: string }) {
   return id === "usdt" ? (
     <UsdtIcon size={size} className={className} />
   ) : (
