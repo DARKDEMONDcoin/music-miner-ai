@@ -130,6 +130,9 @@ export type Track = {
 
 export type GameState = {
   balance: number;
+  gram: number;
+  usdt: number;
+  minerLevels: Record<string, number>;
   levels: Record<string, number>;
   lastCollectAt: number;
   collectsToday: number;
@@ -156,6 +159,9 @@ export function makeRefCode() {
 export function initialState(): GameState {
   return {
     balance: 500,
+    gram: 0,
+    usdt: 0,
+    minerLevels: {},
     levels: { "lofi-pad": 1 },
     lastCollectAt: Date.now(),
     collectsToday: 0,
@@ -169,6 +175,7 @@ export function initialState(): GameState {
     refCode: makeRefCode(),
   };
 }
+
 
 export function isPremium(s: GameState) {
   return s.premiumUntil > Date.now();
