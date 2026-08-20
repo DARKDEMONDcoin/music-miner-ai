@@ -1,18 +1,23 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { BarChart3, Heart, Sparkles, Zap } from "lucide-react";
+import { BarChart3, DollarSign, Gem, Heart, Sparkles, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { useGame } from "@/hooks/useGame";
 import {
+  MINERS,
   activeTrack,
   fillPct,
+  formatCrypto,
   formatNumber,
   isPremium,
+  minerPending,
+  minerRate,
   multiplier,
   pending,
   ratePerHour,
   storageHours,
 } from "@/lib/game";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
