@@ -144,6 +144,7 @@ export type GameState = {
   boosterUntil: number;
   referrals: number;
   refCode: string;
+  walletAddress: string | null;
 };
 
 export const STORAGE_KEY = "music-ai-state-v1";
@@ -173,6 +174,7 @@ export function initialState(): GameState {
     boosterUntil: 0,
     referrals: 0,
     refCode: makeRefCode(),
+    walletAddress: null,
   };
 }
 
