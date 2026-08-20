@@ -1,4 +1,13 @@
+export type InstrumentId =
+  | "lofi-pad"
+  | "synth"
+  | "drum-machine"
+  | "grand-piano"
+  | "neural-mixer"
+  | "quantum-sampler";
+
 export type Instrument = {
+
   id: InstrumentId;
   name: string;
   icon: string;
