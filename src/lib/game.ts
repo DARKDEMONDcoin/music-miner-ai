@@ -214,9 +214,73 @@ export function fillPct(s: GameState, now = Date.now()) {
   return Math.min(100, (hours / storageHours(s)) * 100);
 }
 
+/* ---------------- Crypto miners: GRAM & USDT ---------------- */
+
+export type MinerId = "gram" | "usdt";
+
+export type Miner = {
+  id: MinerId;
+  name: string;
+  symbol: string;
+  desc: string;
+  icon: string;
+  baseRate: number; // coins per hour at level 1
+  baseCost: number; // MUSIC cost for level 1
+  minWithdraw: number;
+};
+
+export const MINERS: Miner[] = [
+  {
+    id: "gram",
+    name: "GRAM Extractor",
+    symbol: "GRAM",
+    desc: "Mines GRAM, the TON network coin, straight into your wallet.",
+    icon: "Gem",
+    baseRate: 0.0025,
+    baseCost: 250_000,
+    minWithdraw: 1,
+  },
+  {
+    id: "usdt",
+    name: "USDT Rig",
+    symbol: "USDT",
+    desc: "Converts studio output into stable USDT every hour.",
+    icon: "DollarSign",
+    baseRate: 0.0009,
+    baseCost: 600_000,
+    minWithdraw: 5,
+  },
+];
+
+export const MINER_COST_GROWTH = 1.75;
+export const MINER_RATE_GROWTH = 1.4;
+
+export function minerUpgradeCost(m: Miner, level: number) {
+  return Math.round(m.baseCost * Math.pow(MINER_COST_GROWTH, level));
+}
+
+export function minerRate(s: GameState, m: Miner) {
+  const level = s.minerLevels[m.id] ?? 0;
+  if (level <= 0) return 0;
+  const raw = m.baseRate * Math.pow(MINER_RATE_GROWTH, level - 1);
+  return raw * (isPremium(s) ? 2 : 1) * (s.boosterUntil > Date.now() ? 1.5 : 1);
+}
+
+export function minerPending(s: GameState, m: Miner, now = Date.now()) {
+  const hours = Math.min((now - s.lastCollectAt) / 3_600_000, storageHours(s));
+  return Math.max(0, hours * minerRate(s, m));
+}
+
+export function formatCrypto(n: number) {
+  if (n >= 1000) return n.toFixed(2);
+  if (n >= 1) return n.toFixed(3);
+  return n.toFixed(5);
+}
+
 export function formatNumber(n: number) {
   if (n >= 1_000_000_000) return (n / 1_000_000_000).toFixed(2) + "B";
   if (n >= 1_000_000) return (n / 1_000_000).toFixed(2) + "M";
   if (n >= 1_000) return (n / 1_000).toFixed(2) + "K";
   return n.toFixed(n < 100 ? 2 : 0);
 }
+
