@@ -34,6 +34,10 @@ type Ctx = {
   grant: (amount: number) => void;
   buy: (kind: "premium" | "booster" | "coins" | "gram" | "usdt", amount?: number) => void;
   addReferral: () => void;
+  connectWallet: (address: string) => void;
+  disconnectWallet: () => void;
+  withdraw: (id: MinerId) => boolean;
+  payWithGram: (amount: number) => boolean;
   reset: () => void;
 };
 
@@ -170,6 +174,37 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setState((s) => ({ ...s, referrals: s.referrals + 1, balance: s.balance + 1000 }));
   }, []);
 
+  const connectWallet = useCallback((address: string) => {
+    setState((s) => ({ ...s, walletAddress: address.trim() }));
+  }, []);
+
+  const disconnectWallet = useCallback(() => {
+    setState((s) => ({ ...s, walletAddress: null }));
+  }, []);
+
+  const withdraw = useCallback((id: MinerId) => {
+    let ok = false;
+    setState((s) => {
+      const miner = MINERS.find((m) => m.id === id);
+      if (!miner || !s.walletAddress) return s;
+      const balance = id === "gram" ? s.gram : s.usdt;
+      if (balance < miner.minWithdraw) return s;
+      ok = true;
+      return id === "gram" ? { ...s, gram: 0 } : { ...s, usdt: 0 };
+    });
+    return ok;
+  }, []);
+
+  const payWithGram = useCallback((amount: number) => {
+    let ok = false;
+    setState((s) => {
+      if (s.gram < amount) return s;
+      ok = true;
+      return { ...s, gram: s.gram - amount };
+    });
+    return ok;
+  }, []);
+
   const reset = useCallback(() => setState(initialState()), []);
 
   const value = useMemo(
@@ -185,6 +220,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
       grant,
       buy,
       addReferral,
+      connectWallet,
+      disconnectWallet,
+      withdraw,
+      payWithGram,
       reset,
     }),
     [
@@ -199,6 +238,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
       grant,
       buy,
       addReferral,
+      connectWallet,
+      disconnectWallet,
+      withdraw,
+      payWithGram,
       reset,
     ],
   );
