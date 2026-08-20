@@ -2,7 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   AudioWaveform,
   Brain,
+  DollarSign,
   Drum,
+  Gem,
   Orbit,
   Piano,
   SlidersHorizontal,
@@ -12,11 +14,16 @@ import { toast } from "sonner";
 import { useGame } from "@/hooks/useGame";
 import {
   INSTRUMENTS,
+  MINERS,
+  formatCrypto,
   formatNumber,
   instrumentRate,
+  minerRate,
+  minerUpgradeCost,
   ratePerHour,
   upgradeCost,
 } from "@/lib/game";
+
 
 export const Route = createFileRoute("/studio")({
   head: () => ({
