@@ -17,6 +17,7 @@ import { Route as StudioRouteImport } from './routes/studio'
 import { Route as TasksRouteImport } from './routes/tasks'
 import { Route as ApiAiComposeRouteImport } from './routes/api/ai/compose'
 import { Route as ApiAiCoverRouteImport } from './routes/api/ai/cover'
+import { Route as ApiTelegramInvoiceRouteImport } from './routes/api/telegram/invoice'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -58,6 +59,11 @@ const ApiAiCoverRoute = ApiAiCoverRouteImport.update({
   path: '/api/ai/cover',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiTelegramInvoiceRoute = ApiTelegramInvoiceRouteImport.update({
+  id: '/api/telegram/invoice',
+  path: '/api/telegram/invoice',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/tasks': typeof TasksRoute
   '/api/ai/compose': typeof ApiAiComposeRoute
   '/api/ai/cover': typeof ApiAiCoverRoute
+  '/api/telegram/invoice': typeof ApiTelegramInvoiceRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByTo {
   '/tasks': typeof TasksRoute
   '/api/ai/compose': typeof ApiAiComposeRoute
   '/api/ai/cover': typeof ApiAiCoverRoute
+  '/api/telegram/invoice': typeof ApiTelegramInvoiceRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/tasks': typeof TasksRoute
   '/api/ai/compose': typeof ApiAiComposeRoute
   '/api/ai/cover': typeof ApiAiCoverRoute
+  '/api/telegram/invoice': typeof ApiTelegramInvoiceRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +110,7 @@ export interface FileRouteTypes {
     | '/tasks'
     | '/api/ai/compose'
     | '/api/ai/cover'
+    | '/api/telegram/invoice'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/tasks'
     | '/api/ai/compose'
     | '/api/ai/cover'
+    | '/api/telegram/invoice'
   id:
     | '__root__'
     | '/'
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
     | '/tasks'
     | '/api/ai/compose'
     | '/api/ai/cover'
+    | '/api/telegram/invoice'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -132,6 +144,7 @@ export interface RootRouteChildren {
   TasksRoute: typeof TasksRoute
   ApiAiComposeRoute: typeof ApiAiComposeRoute
   ApiAiCoverRoute: typeof ApiAiCoverRoute
+  ApiTelegramInvoiceRoute: typeof ApiTelegramInvoiceRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -192,6 +205,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAiCoverRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/telegram/invoice': {
+      id: '/api/telegram/invoice'
+      path: '/api/telegram/invoice'
+      fullPath: '/api/telegram/invoice'
+      preLoaderRoute: typeof ApiTelegramInvoiceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -204,6 +224,7 @@ const rootRouteChildren: RootRouteChildren = {
   TasksRoute: TasksRoute,
   ApiAiComposeRoute: ApiAiComposeRoute,
   ApiAiCoverRoute: ApiAiCoverRoute,
+  ApiTelegramInvoiceRoute: ApiTelegramInvoiceRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
