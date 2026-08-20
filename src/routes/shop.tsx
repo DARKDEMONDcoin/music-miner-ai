@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Coins, Crown, Gem, Music4, Rocket, Star, type LucideIcon } from "lucide-react";
 import { toast } from "sonner";
 import { useGame } from "@/hooks/useGame";
 import { isPremium } from "@/lib/game";
@@ -6,13 +7,13 @@ import { isPremium } from "@/lib/game";
 export const Route = createFileRoute("/shop")({
   head: () => ({
     meta: [
-      { title: "المتجر | Music AI" },
+      { title: "Shop | Music AI" },
       {
         name: "description",
-        content: "اشترِ Premium والبوسترات وحزم التوليد بنجوم تليجرام أو TON داخل Music AI.",
+        content: "Buy Premium, boosters and AI track packs with Telegram Stars or TON.",
       },
-      { property: "og:title", content: "المتجر | Music AI" },
-      { property: "og:description", content: "عروض وحزم مدفوعة بنجوم تليجرام و TON." },
+      { property: "og:title", content: "Shop | Music AI" },
+      { property: "og:description", content: "Premium passes and boosters paid with Stars or TON." },
     ],
   }),
   component: ShopPage,
@@ -24,51 +25,51 @@ type Item = {
   desc: string;
   stars: number;
   ton: string;
-  emoji: string;
+  icon: LucideIcon;
   highlight?: boolean;
 };
 
 const ITEMS: Item[] = [
   {
     id: "premium",
-    title: "Premium Pass — شهر",
-    desc: "×2 تعدين، سعة 24 ساعة، 5 تراكات AI يوميًا، بدون إعلانات.",
+    title: "Premium Pass — 30 days",
+    desc: "2x mining, 24h storage, 5 AI tracks per day, no ads.",
     stars: 250,
     ton: "1.2",
-    emoji: "⭐",
+    icon: Crown,
     highlight: true,
   },
   {
     id: "booster",
-    title: "بوستر ×3 لمدة 8 ساعات",
-    desc: "ضاعف معدل التعدين ثلاث مرات فورًا.",
+    title: "3x Booster — 8 hours",
+    desc: "Triple your mining rate instantly.",
     stars: 75,
     ton: "0.4",
-    emoji: "🚀",
+    icon: Rocket,
   },
   {
     id: "tracks10",
-    title: "حزمة 10 تراكات AI",
-    desc: "توليد إضافي يتخطى الحد اليومي.",
+    title: "10 AI track pack",
+    desc: "Extra generations beyond your daily limit.",
     stars: 100,
     ton: "0.5",
-    emoji: "🎼",
+    icon: Music4,
   },
   {
     id: "coins",
-    title: "حقيبة 250,000 MUSIC",
-    desc: "دفعة عملات فورية لترقية آلاتك.",
+    title: "250,000 MUSIC bag",
+    desc: "Instant coins to upgrade your instruments.",
     stars: 400,
     ton: "1.9",
-    emoji: "💰",
+    icon: Coins,
   },
   {
     id: "mega",
-    title: "Mega Bundle الموسمي",
-    desc: "Premium + بوستر أسبوع + 1,000,000 MUSIC.",
+    title: "Seasonal Mega Bundle",
+    desc: "Premium + one week booster + 1,000,000 MUSIC.",
     stars: 2500,
     ton: "11.5",
-    emoji: "🏆",
+    icon: Gem,
   },
 ];
 
@@ -84,55 +85,60 @@ function ShopPage() {
       buy("booster");
       buy("coins", 1_000_000);
     }
-    toast.success("تم تفعيل الشراء (وضع تجريبي)", {
+    toast.success("Purchase applied (demo mode)", {
       description:
         method === "stars"
-          ? "الدفع الحقيقي بنجوم تليجرام يُفعَّل في مرحلة الدفع."
-          : "الدفع الحقيقي عبر TON يُفعَّل في مرحلة الدفع.",
+          ? "Real Telegram Stars checkout activates in the payments phase."
+          : "Real TON checkout activates in the payments phase.",
     });
   };
 
   return (
-    <div className="space-y-4 pt-1">
-      <section className="surface rounded-2xl p-4 text-center">
-        <p className="text-sm font-bold">
-          {isPremium(state) ? "عضويتك Premium فعّالة ⭐" : "طوّر استوديوك أسرع"}
+    <div className="space-y-3">
+      <section className="liquid-glass animate-fade-up delay-1 rounded-2xl p-5 text-center">
+        <p className="text-sm">
+          {isPremium(state) ? "Premium is active" : "Level up your studio faster"}
         </p>
-        <p className="mt-1 text-[11px] text-muted-foreground">
-          الدفع بنجوم تليجرام أو بمحفظة TON
-        </p>
+        <p className="mt-1 text-[11px] text-foreground/60">Pay with Telegram Stars or a TON wallet</p>
       </section>
 
-      {ITEMS.map((item) => (
-        <div
-          key={item.id}
-          className={`surface rounded-2xl p-4 ${item.highlight ? "glow border-primary/60" : ""}`}
-        >
-          <div className="flex items-start gap-3">
-            <div className="flex size-12 items-center justify-center rounded-xl bg-secondary text-2xl">
-              {item.emoji}
+      {ITEMS.map((item, i) => {
+        const Icon = item.icon;
+        return (
+          <div
+            key={item.id}
+            className={`liquid-glass animate-fade-up rounded-2xl p-4 ${i < 4 ? `delay-${i + 2}` : ""}`}
+          >
+            <div className="flex items-start gap-3">
+              <div
+                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${
+                  item.highlight ? "bg-white text-blue-700" : "bg-blue-700"
+                }`}
+              >
+                <Icon size={20} strokeWidth={2} />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm">{item.title}</p>
+                <p className="text-[11px] text-foreground/60">{item.desc}</p>
+              </div>
             </div>
-            <div className="flex-1">
-              <p className="text-sm font-bold">{item.title}</p>
-              <p className="text-[11px] text-muted-foreground">{item.desc}</p>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <button
+                onClick={() => handle(item, "stars")}
+                className="flex items-center justify-center gap-1.5 rounded-xl bg-white py-2.5 text-xs text-gray-900 transition-transform duration-200 hover:scale-105 active:scale-95"
+              >
+                <Star size={13} strokeWidth={2} className="text-blue-700" /> {item.stars} Stars
+              </button>
+              <button
+                onClick={() => handle(item, "ton")}
+                className="flex items-center justify-center gap-1.5 rounded-xl bg-blue-700 py-2.5 text-xs transition-transform duration-200 hover:scale-105 active:scale-95"
+              >
+                <Gem size={13} strokeWidth={2} /> {item.ton} TON
+              </button>
             </div>
           </div>
-          <div className="mt-3 grid grid-cols-2 gap-2">
-            <button
-              onClick={() => handle(item, "stars")}
-              className="brand-gradient rounded-xl py-2.5 text-xs font-bold text-primary-foreground"
-            >
-              ⭐ {item.stars} نجمة
-            </button>
-            <button
-              onClick={() => handle(item, "ton")}
-              className="rounded-xl bg-secondary py-2.5 text-xs font-bold"
-            >
-              💎 {item.ton} TON
-            </button>
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
