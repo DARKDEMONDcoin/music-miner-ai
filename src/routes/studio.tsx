@@ -47,7 +47,7 @@ const ICONS: Record<string, LucideIcon> = {
 };
 
 function StudioPage() {
-  const { state, upgrade } = useGame();
+  const { state, upgrade, upgradeMiner } = useGame();
 
   return (
     <div className="space-y-3">
