@@ -57,14 +57,26 @@ function MinePage() {
   const rate = ratePerHour(state);
   const track = activeTrack(state);
 
+  const gramMiner = MINERS[0]!;
+  const usdtMiner = MINERS[1]!;
+  const gramReady = minerPending(state, gramMiner, now);
+  const usdtReady = minerPending(state, usdtMiner, now);
+
   const onCollect = () => {
     const gained = collect();
-    if (gained <= 0) {
+    if (gained.music <= 0 && gained.gram <= 0 && gained.usdt <= 0) {
       toast("Nothing collected yet", { description: "Come back later or upgrade your rig." });
       return;
     }
-    toast.success(`+${formatNumber(gained)} MUSIC`);
+    const extra = [
+      gained.gram > 0 ? `+${formatCrypto(gained.gram)} GRAM` : null,
+      gained.usdt > 0 ? `+${formatCrypto(gained.usdt)} USDT` : null,
+    ].filter(Boolean);
+    toast.success(`+${formatNumber(gained.music)} MUSIC`, {
+      description: extra.length ? extra.join("  ·  ") : undefined,
+    });
   };
+
 
   return (
     <div className="space-y-3">
