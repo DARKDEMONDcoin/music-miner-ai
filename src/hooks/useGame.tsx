@@ -9,12 +9,16 @@ import {
 } from "react";
 import {
   INSTRUMENTS,
+  MINERS,
   STORAGE_KEY,
   initialState,
+  minerPending,
+  minerUpgradeCost,
   pending,
   todayStamp,
   upgradeCost,
   type GameState,
+  type MinerId,
   type Track,
 } from "@/lib/game";
 
@@ -22,15 +26,17 @@ type Ctx = {
   state: GameState;
   now: number;
   ready: boolean;
-  collect: () => number;
+  collect: () => { music: number; gram: number; usdt: number };
   upgrade: (id: string) => boolean;
+  upgradeMiner: (id: MinerId) => boolean;
   claimTask: (id: string, reward: number) => void;
   addTrack: (t: Track) => void;
   grant: (amount: number) => void;
-  buy: (kind: "premium" | "booster" | "coins", amount?: number) => void;
+  buy: (kind: "premium" | "booster" | "coins" | "gram" | "usdt", amount?: number) => void;
   addReferral: () => void;
   reset: () => void;
 };
+
 
 const GameCtx = createContext<Ctx | null>(null);
 
