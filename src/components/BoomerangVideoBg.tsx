@@ -113,7 +113,7 @@ export function BoomerangVideoBg() {
         className={`h-full w-full object-cover ${captured ? "hidden" : ""}`}
       />
       {captured && <canvas ref={canvasRef} className="h-full w-full object-cover" />}
-      <div className="absolute inset-0 bg-background/55" />
+      <div className="absolute inset-0 bg-gradient-to-b from-background/45 via-background/55 to-background/75" />
     </div>
   );
 }
