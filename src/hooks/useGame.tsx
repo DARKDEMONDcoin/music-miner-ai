@@ -1,0 +1,150 @@
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
+import {
+  INSTRUMENTS,
+  STORAGE_KEY,
+  initialState,
+  pending,
+  todayStamp,
+  upgradeCost,
+  type GameState,
+  type Track,
+} from "@/lib/game";
+
+type Ctx = {
+  state: GameState;
+  now: number;
+  ready: boolean;
+  collect: () => number;
+  upgrade: (id: string) => boolean;
+  claimTask: (id: string, reward: number) => void;
+  addTrack: (t: Track) => void;
+  grant: (amount: number) => void;
+  buy: (kind: "premium" | "booster" | "coins", amount?: number) => void;
+  addReferral: () => void;
+  reset: () => void;
+};
+
+const GameCtx = createContext<Ctx | null>(null);
+
+export function GameProvider({ children }: { children: ReactNode }) {
+  const [state, setState] = useState<GameState>(() => initialState());
+  const [ready, setReady] = useState(false);
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = { ...initialState(), ...(JSON.parse(raw) as GameState) };
+        const today = todayStamp();
+        if (parsed.dayStamp !== today) {
+          const yesterday = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
+          parsed.streak = parsed.dayStamp === yesterday ? parsed.streak + 1 : 1;
+          parsed.dayStamp = today;
+          parsed.collectsToday = 0;
+          parsed.claimedTasks = parsed.claimedTasks.filter((t) => !t.startsWith("daily-"));
+        }
+        setState(parsed);
+      }
+    } catch {
+      /* ignore */
+    }
+    setReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!ready) return;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }, [state, ready]);
+
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, []);
+
+  const collect = useCallback(() => {
+    let gained = 0;
+    setState((s) => {
+      gained = pending(s);
+      if (gained <= 0) return s;
+      return {
+        ...s,
+        balance: s.balance + gained,
+        lastCollectAt: Date.now(),
+        collectsToday: s.collectsToday + 1,
+      };
+    });
+    return gained;
+  }, []);
+
+  const upgrade = useCallback((id: string) => {
+    let ok = false;
+    setState((s) => {
+      const inst = INSTRUMENTS.find((i) => i.id === id);
+      if (!inst) return s;
+      const level = s.levels[id] ?? 0;
+      const cost = upgradeCost(inst, level);
+      if (s.balance < cost) return s;
+      ok = true;
+      return {
+        ...s,
+        balance: s.balance - cost,
+        levels: { ...s.levels, [id]: level + 1 },
+      };
+    });
+    return ok;
+  }, []);
+
+  const claimTask = useCallback((id: string, reward: number) => {
+    setState((s) =>
+      s.claimedTasks.includes(id)
+        ? s
+        : { ...s, balance: s.balance + reward, claimedTasks: [...s.claimedTasks, id] },
+    );
+  }, []);
+
+  const addTrack = useCallback((t: Track) => {
+    setState((s) => ({ ...s, tracks: [t, ...s.tracks].slice(0, 30) }));
+  }, []);
+
+  const grant = useCallback((amount: number) => {
+    setState((s) => ({ ...s, balance: s.balance + amount }));
+  }, []);
+
+  const buy = useCallback((kind: "premium" | "booster" | "coins", amount = 0) => {
+    setState((s) => {
+      if (kind === "premium")
+        return { ...s, premiumUntil: Math.max(s.premiumUntil, Date.now()) + 30 * 86_400_000 };
+      if (kind === "booster")
+        return { ...s, boosterUntil: Math.max(s.boosterUntil, Date.now()) + 8 * 3_600_000 };
+      return { ...s, balance: s.balance + amount };
+    });
+  }, []);
+
+  const addReferral = useCallback(() => {
+    setState((s) => ({ ...s, referrals: s.referrals + 1, balance: s.balance + 1000 }));
+  }, []);
+
+  const reset = useCallback(() => setState(initialState()), []);
+
+  const value = useMemo(
+    () => ({ state, now, ready, collect, upgrade, claimTask, addTrack, grant, buy, addReferral, reset }),
+    [state, now, ready, collect, upgrade, claimTask, addTrack, grant, buy, addReferral, reset],
+  );
+
+  return <GameCtx.Provider value={value}>{children}</GameCtx.Provider>;
+}
+
+export function useGame() {
+  const ctx = useContext(GameCtx);
+  if (!ctx) throw new Error("useGame must be used inside GameProvider");
+  return ctx;
+}
