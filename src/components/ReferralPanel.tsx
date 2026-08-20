@@ -1,20 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { Copy, Send, Users } from "lucide-react";
 import { toast } from "sonner";
 import { useGame } from "@/hooks/useGame";
 import { formatNumber } from "@/lib/game";
-
-export const Route = createFileRoute("/referral")({
-  head: () => ({
-    meta: [
-      { title: "Invite | Music AI" },
-      { name: "description", content: "Invite friends and earn 10% of their mining for life in Music AI." },
-      { property: "og:title", content: "Invite | Music AI" },
-      { property: "og:description", content: "Two-tier referral rewards with instant bonuses per friend." },
-    ],
-  }),
-  component: ReferralPage,
-});
 
 const TIERS = [
   { label: "Friend joins", reward: 1000 },
@@ -22,9 +9,9 @@ const TIERS = [
   { label: "Friend buys Premium", reward: 25000 },
 ];
 
-function ReferralPage() {
+export function ReferralPanel() {
   const { state } = useGame();
-  const link = `https://t.me/MusicAiBot?start=${state.refCode}`;
+  const link = `https://t.me/Mosuclbot?start=${state.refCode}`;
 
   return (
     <div className="space-y-3">
@@ -32,7 +19,7 @@ function ReferralPage() {
         <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-blue-700">
           <Users size={20} strokeWidth={2} />
         </div>
-        <h1 className="mt-3 text-lg tracking-tight">Invite friends, earn together</h1>
+        <h2 className="mt-3 text-lg tracking-tight">Invite friends, earn together</h2>
         <p className="mt-1 text-xs text-foreground/60">
           Get 10% of every friend's mining and 2.5% of their friends, for life.
         </p>
@@ -75,7 +62,7 @@ function ReferralPage() {
       </section>
 
       <section className="liquid-glass animate-fade-up delay-3 space-y-2 rounded-2xl p-4">
-        <h2 className="text-sm">Referral rewards</h2>
+        <h3 className="text-sm">Referral rewards</h3>
         {TIERS.map((t) => (
           <div key={t.label} className="flex items-center justify-between text-xs text-foreground/80">
             <span>{t.label}</span>

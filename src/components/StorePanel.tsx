@@ -1,13 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Check, Gem, Loader2, Star } from "lucide-react";
+import { Check, Loader2, Star } from "lucide-react";
 import { toast } from "sonner";
 import { useGame } from "@/hooks/useGame";
 import { isPremium } from "@/lib/game";
+import { GramIcon } from "@/components/CoinIcon";
 import {
   SHOP_ITEMS,
-  TON_WALLET,
   makeMemo,
   openExternal,
   telegram,
@@ -16,24 +15,7 @@ import {
 } from "@/lib/payments";
 import { verifyTonPayment } from "@/lib/ton.functions";
 
-export const Route = createFileRoute("/shop")({
-  head: () => ({
-    meta: [
-      { title: "Shop | Music AI" },
-      {
-        name: "description",
-        content: "Buy Premium, boosters and AI track packs with Telegram Stars or TON.",
-      },
-      { property: "og:title", content: "Shop | Music AI" },
-      { property: "og:description", content: "Premium passes and boosters paid with Stars or TON." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: ShopPage,
-});
-
-function ShopPage() {
+export function StorePanel() {
   const { state, buy } = useGame();
   const verify = useServerFn(verifyTonPayment);
   const [busy, setBusy] = useState<string | null>(null);
@@ -88,7 +70,7 @@ function ShopPage() {
     }
   };
 
-  const payWithTon = async (item: ShopItem) => {
+  const payWithGram = async (item: ShopItem) => {
     const memo = makeMemo(item.id);
     openExternal(tonkeeperLink(item.ton, memo));
     setBusy(`${item.id}-ton`);
@@ -113,26 +95,23 @@ function ShopPage() {
     }
     setBusy(null);
     toast("Payment not detected yet", {
-      description: "If you already sent it, reopen the shop in a minute.",
+      description: "If you already sent it, reopen the store in a minute.",
     });
   };
 
   return (
     <div className="space-y-3">
-      <section className="liquid-glass animate-fade-up delay-1 rounded-2xl p-5 text-center">
+      <section className="liquid-glass animate-fade-up delay-1 rounded-2xl p-4 text-center">
         <p className="text-sm">
           {isPremium(state) ? "Premium is active" : "Level up your studio faster"}
         </p>
-        <p className="mt-1 text-[11px] text-foreground/60">Pay with Telegram Stars or GRAM on TON</p>
-        <p className="mt-3 truncate rounded-lg bg-white/10 px-3 py-2 text-[10px] text-foreground/60">
-          {TON_WALLET}
-        </p>
+        <p className="mt-1 text-[11px] text-foreground/60">Pay with Telegram Stars or GRAM</p>
       </section>
 
       {SHOP_ITEMS.map((item, i) => {
         const Icon = item.icon;
         const starsBusy = busy === `${item.id}-stars`;
-        const tonBusy = busy === `${item.id}-ton`;
+        const gramBusy = busy === `${item.id}-ton`;
         return (
           <div
             key={item.id}
@@ -166,14 +145,14 @@ function ShopPage() {
               </button>
               <button
                 disabled={Boolean(busy)}
-                onClick={() => payWithTon(item)}
+                onClick={() => payWithGram(item)}
                 className="flex items-center justify-center gap-1.5 rounded-xl bg-blue-700 py-2.5 text-xs transition-transform duration-200 hover:scale-105 active:scale-95 disabled:opacity-50"
               >
-                {tonBusy ? <Loader2 size={13} className="animate-spin" /> : <Gem size={13} strokeWidth={2} />}
+                {gramBusy ? <Loader2 size={13} className="animate-spin" /> : <GramIcon size={14} />}
                 {item.ton} GRAM
               </button>
             </div>
-            {tonBusy && (
+            {gramBusy && (
               <p className="mt-2 flex items-center gap-1.5 text-[10px] text-foreground/60">
                 <Check size={11} /> Checking the blockchain for your transfer…
               </p>

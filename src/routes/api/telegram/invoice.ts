@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { INSTRUMENTS, MINERS, minerUpgradeCost, starsForCost, upgradeCost } from "@/lib/game";
 
 const ITEMS: Record<string, { title: string; desc: string; stars: number }> = {
   premium: { title: "Premium Pass — 30 days", desc: "2x mining, 24h storage, 5 AI tracks/day", stars: 250 },
@@ -20,8 +21,39 @@ export const Route = createFileRoute("/api/telegram/invoice")({
           return Response.json({ error: "MUSIC_TELEGRAM_BOT_TOKEN is not configured" }, { status: 503 });
         }
 
-        const { itemId } = (await request.json()) as { itemId?: string };
-        const item = itemId ? ITEMS[itemId] : undefined;
+        const body = (await request.json()) as {
+          itemId?: string;
+          upgradeKind?: "instrument" | "miner";
+          upgradeId?: string;
+          level?: number;
+        };
+        const { itemId } = body;
+
+        let item = itemId ? ITEMS[itemId] : undefined;
+        if (itemId === "upgrade") {
+          const level = Math.max(0, Math.floor(body.level ?? 0));
+          if (body.upgradeKind === "instrument") {
+            const inst = INSTRUMENTS.find((i) => i.id === body.upgradeId);
+            if (inst) {
+              const cost = upgradeCost(inst, level);
+              item = {
+                title: `${inst.name} — level ${level + 1}`,
+                desc: "Instant instrument upgrade in your Music AI studio",
+                stars: starsForCost(cost),
+              };
+            }
+          } else if (body.upgradeKind === "miner") {
+            const miner = MINERS.find((m) => m.id === body.upgradeId);
+            if (miner) {
+              const cost = minerUpgradeCost(miner, level);
+              item = {
+                title: `${miner.name} — level ${level + 1}`,
+                desc: "Instant crypto rig upgrade in your Music AI studio",
+                stars: starsForCost(cost),
+              };
+            }
+          }
+        }
         if (!item) return Response.json({ error: "Unknown item" }, { status: 400 });
 
         const res = await fetch(`https://api.telegram.org/bot${token}/createInvoiceLink`, {

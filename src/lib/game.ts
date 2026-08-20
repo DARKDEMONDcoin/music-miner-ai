@@ -144,6 +144,7 @@ export type GameState = {
   boosterUntil: number;
   referrals: number;
   refCode: string;
+  walletAddress: string | null;
 };
 
 export const STORAGE_KEY = "music-ai-state-v1";
@@ -173,6 +174,7 @@ export function initialState(): GameState {
     boosterUntil: 0,
     referrals: 0,
     refCode: makeRefCode(),
+    walletAddress: null,
   };
 }
 
@@ -291,3 +293,15 @@ export function formatNumber(n: number) {
   return n.toFixed(n < 100 ? 2 : 0);
 }
 
+
+/* ---------------- Alternative payment pricing ---------------- */
+
+/** GRAM price for a MUSIC-denominated upgrade cost. */
+export function gramForCost(musicCost: number) {
+  return Math.max(0.05, Math.round((musicCost / 400_000) * 100) / 100);
+}
+
+/** Telegram Stars price for a MUSIC-denominated upgrade cost. */
+export function starsForCost(musicCost: number) {
+  return Math.max(15, Math.ceil(musicCost / 1500));
+}

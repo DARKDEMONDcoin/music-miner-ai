@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Pickaxe, SlidersHorizontal, Sparkles, ListChecks, Users, ShoppingBag } from "lucide-react";
+import { Pickaxe, SlidersHorizontal, Sparkles, ListChecks, Wallet } from "lucide-react";
 import type { ReactNode } from "react";
 import { useGame } from "@/hooks/useGame";
 import { BoomerangVideoBg } from "@/components/BoomerangVideoBg";
@@ -10,8 +10,7 @@ const NAV = [
   { to: "/studio", label: "Studio", icon: SlidersHorizontal },
   { to: "/ai", label: "AI", icon: Sparkles },
   { to: "/tasks", label: "Tasks", icon: ListChecks },
-  { to: "/referral", label: "Invite", icon: Users },
-  { to: "/shop", label: "Shop", icon: ShoppingBag },
+  { to: "/wallet", label: "Wallet", icon: Wallet },
 ] as const;
 
 function Logo() {
