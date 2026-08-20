@@ -1,15 +1,7 @@
-export type InstrumentId =
-  | "lofi-pad"
-  | "synth"
-  | "drum-machine"
-  | "grand-piano"
-  | "neural-mixer"
-  | "quantum-sampler";
-
 export type Instrument = {
   id: InstrumentId;
   name: string;
-  emoji: string;
+  icon: string;
   desc: string;
   baseRate: number; // MUSIC per hour at level 1
   baseCost: number;
@@ -18,49 +10,49 @@ export type Instrument = {
 export const INSTRUMENTS: Instrument[] = [
   {
     id: "lofi-pad",
-    name: "لو-فاي باد",
-    emoji: "🎹",
-    desc: "أساس الاستوديو، دخل ثابت وهادي.",
+    name: "Lo-Fi Pad",
+    icon: "AudioWaveform",
+    desc: "Studio foundation. Steady, quiet income.",
     baseRate: 10,
     baseCost: 100,
   },
   {
     id: "synth",
-    name: "سينثسايزر",
-    emoji: "🎛️",
-    desc: "موجات كهربائية تزود الإنتاج.",
+    name: "Synthesizer",
+    icon: "SlidersHorizontal",
+    desc: "Electric waves that lift production.",
     baseRate: 26,
     baseCost: 450,
   },
   {
     id: "drum-machine",
-    name: "درام ماشين",
-    emoji: "🥁",
-    desc: "إيقاع سريع = تعدين أسرع.",
+    name: "Drum Machine",
+    icon: "Drum",
+    desc: "Faster rhythm means faster mining.",
     baseRate: 60,
     baseCost: 1800,
   },
   {
     id: "grand-piano",
-    name: "بيانو كبير",
-    emoji: "🎼",
-    desc: "قطعة فاخرة بعائد عالي.",
+    name: "Grand Piano",
+    icon: "Piano",
+    desc: "A premium piece with high yield.",
     baseRate: 145,
     baseCost: 7200,
   },
   {
     id: "neural-mixer",
-    name: "ميكسر عصبي",
-    emoji: "🧠",
-    desc: "ذكاء اصطناعي يوزّع الترددات.",
+    name: "Neural Mixer",
+    icon: "Brain",
+    desc: "AI balances every frequency for you.",
     baseRate: 340,
     baseCost: 26000,
   },
   {
     id: "quantum-sampler",
-    name: "سامبلر كمّي",
-    emoji: "🌌",
-    desc: "أقوى آلة في الاستوديو.",
+    name: "Quantum Sampler",
+    icon: "Orbit",
+    desc: "The most powerful rig in the studio.",
     baseRate: 820,
     baseCost: 95000,
   },
@@ -90,29 +82,29 @@ export type TaskDef = {
 };
 
 export const TASKS: TaskDef[] = [
-  { id: "daily-checkin", title: "تسجيل الدخول اليومي", reward: 250, kind: "daily" },
-  { id: "daily-collect", title: "اجمع أرباحك 3 مرات اليوم", reward: 400, kind: "daily" },
-  { id: "daily-upgrade", title: "رقّي أي آلة اليوم", reward: 600, kind: "daily" },
-  { id: "daily-track", title: "ولّد تراك بالذكاء الاصطناعي", reward: 750, kind: "daily" },
+  { id: "daily-checkin", title: "Daily check-in", reward: 250, kind: "daily" },
+  { id: "daily-collect", title: "Collect earnings 3 times today", reward: 400, kind: "daily" },
+  { id: "daily-upgrade", title: "Upgrade any instrument today", reward: 600, kind: "daily" },
+  { id: "daily-track", title: "Generate an AI track", reward: 750, kind: "daily" },
   {
     id: "join-channel",
-    title: "اشترك في قناة Music AI",
+    title: "Join the Music AI channel",
     reward: 2000,
     kind: "social",
-    cta: "اشترك",
+    cta: "Join",
     url: "https://t.me/",
   },
   {
     id: "follow-x",
-    title: "تابعنا على X",
+    title: "Follow us on X",
     reward: 1500,
     kind: "social",
-    cta: "تابع",
+    cta: "Follow",
     url: "https://x.com/",
   },
-  { id: "invite-1", title: "ادعُ أول صديق", reward: 3000, kind: "achievement" },
-  { id: "invite-5", title: "ادعُ 5 أصدقاء", reward: 12000, kind: "achievement" },
-  { id: "level-10", title: "اوصل بأي آلة للمستوى 10", reward: 20000, kind: "achievement" },
+  { id: "invite-1", title: "Invite your first friend", reward: 3000, kind: "achievement" },
+  { id: "invite-5", title: "Invite 5 friends", reward: 12000, kind: "achievement" },
+  { id: "level-10", title: "Reach level 10 on any instrument", reward: 20000, kind: "achievement" },
 ];
 
 export type Track = {

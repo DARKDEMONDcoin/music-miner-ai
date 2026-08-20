@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { BarChart3, Heart, Sparkles, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { useGame } from "@/hooks/useGame";
 import {
@@ -16,13 +17,13 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "التعدين | Music AI" },
+      { title: "Mine | Music AI" },
       {
         name: "description",
-        content: "اجمع أرباح استوديوك من عملة MUSIC كل بضع ساعات وارفع معدل التعدين.",
+        content: "Collect your studio earnings in MUSIC every few hours and raise your mining rate.",
       },
-      { property: "og:title", content: "التعدين | Music AI" },
-      { property: "og:description", content: "استوديو تعدين عملة MUSIC داخل تليجرام." },
+      { property: "og:title", content: "Mine | Music AI" },
+      { property: "og:description", content: "Mine the MUSIC coin inside your Telegram studio." },
     ],
   }),
   component: MinePage,
@@ -34,8 +35,8 @@ function Equalizer() {
       {[0, 1, 2, 3, 4, 5, 6].map((i) => (
         <span
           key={i}
-          className="animate-eq brand-gradient w-1.5 origin-bottom rounded-full"
-          style={{ height: 26, animationDelay: `${i * 120}ms` }}
+          className="animate-eq w-1 origin-bottom rounded-full bg-blue-700"
+          style={{ height: 22, animationDelay: `${i * 120}ms` }}
         />
       ))}
     </div>
@@ -44,7 +45,7 @@ function Equalizer() {
 
 function MinePage() {
   const { state, now, collect } = useGame();
-  const [pops, setPops] = useState<{ id: number; amount: number }[]>([]);
+  const [liked, setLiked] = useState(false);
 
   const ready = pending(state, now);
   const fill = fillPct(state, now);
@@ -54,111 +55,102 @@ function MinePage() {
   const onCollect = () => {
     const gained = collect();
     if (gained <= 0) {
-      toast("لسه مفيش أرباح مجمّعة", { description: "ارجع بعد شوية أو رقّي آلاتك." });
+      toast("Nothing collected yet", { description: "Come back later or upgrade your rig." });
       return;
     }
-    const id = Date.now();
-    setPops((p) => [...p, { id, amount: gained }]);
-    setTimeout(() => setPops((p) => p.filter((x) => x.id !== id)), 900);
     toast.success(`+${formatNumber(gained)} MUSIC`);
   };
 
   return (
-    <div className="space-y-4 pt-1">
-      <section className="surface relative overflow-hidden rounded-3xl p-5 text-center">
-        <div className="absolute inset-x-0 -top-16 h-32 opacity-30 blur-3xl brand-gradient" />
-        <p className="relative text-xs text-muted-foreground">رصيدك من العملة</p>
-        <p className="relative mt-1 text-4xl font-black tracking-tight">
-          <span className="text-brand-gradient">{formatNumber(state.balance)}</span>
-          <span className="ms-2 text-sm text-muted-foreground">MUSIC</span>
+    <div className="space-y-3">
+      <section className="liquid-glass animate-fade-up delay-1 rounded-2xl p-5 text-center">
+        <p className="text-xs text-foreground/60">Balance</p>
+        <p className="mt-1 text-4xl tracking-tight">
+          {formatNumber(state.balance)}
+          <span className="ml-2 text-sm text-foreground/60">MUSIC</span>
         </p>
 
-        <div className="relative mt-4 flex items-center justify-center gap-3 text-xs">
-          <span className="surface rounded-full px-3 py-1">
-            ⚡ {formatNumber(rate)} / ساعة
+        <div className="mt-4 flex items-center justify-center gap-2 text-xs">
+          <span className="glass-thin flex items-center gap-1.5 rounded-lg px-3 py-1.5">
+            <Zap size={12} strokeWidth={2} /> {formatNumber(rate)} / hr
           </span>
-          <span className="surface rounded-full px-3 py-1">
-            ✖️ {multiplier(state).toFixed(2)} مضاعف
+          <span className="glass-thin rounded-lg px-3 py-1.5">
+            {multiplier(state).toFixed(2)}x multiplier
           </span>
-        </div>
-
-        <div className="relative mx-auto mt-6 flex size-40 items-center justify-center">
-          <span className="animate-pulse-ring absolute inset-0 rounded-full border border-primary/60" />
-          <button
-            onClick={onCollect}
-            className="brand-gradient glow flex size-36 flex-col items-center justify-center rounded-full font-black text-primary-foreground transition-transform active:scale-95"
-          >
-            <Equalizer />
-            <span className="mt-2 text-lg">اجمع</span>
-            <span className="text-xs opacity-80">{formatNumber(ready)}</span>
-          </button>
-          {pops.map((p) => (
-            <span
-              key={p.id}
-              className="animate-float-up pointer-events-none absolute text-sm font-bold text-success"
-            >
-              +{formatNumber(p.amount)}
-            </span>
-          ))}
-        </div>
-
-        <div className="relative mt-5">
-          <div className="flex justify-between text-[11px] text-muted-foreground">
-            <span>سعة التخزين {storageHours(state)} ساعة</span>
-            <span>{fill.toFixed(0)}%</span>
-          </div>
-          <div className="mt-1 h-2.5 overflow-hidden rounded-full bg-muted">
-            <div className="brand-gradient h-full rounded-full transition-all" style={{ width: `${fill}%` }} />
-          </div>
-          {fill >= 100 && (
-            <p className="mt-2 text-[11px] font-semibold text-gold">
-              التخزين امتلأ! اجمع الآن حتى لا تخسر أرباحًا.
-            </p>
-          )}
         </div>
       </section>
 
-      <div className="grid grid-cols-3 gap-3">
-        <Stat label="سلسلة الأيام" value={`${state.streak} 🔥`} />
-        <Stat label="الأصدقاء" value={`${state.referrals} 👥`} />
-        <Stat label="الحالة" value={isPremium(state) ? "Premium ⭐" : "مجاني"} />
-      </div>
+      <section className="liquid-glass animate-fade-up delay-2 rounded-2xl p-5">
+        <div className="flex items-center justify-between text-xs text-foreground/70">
+          <span>Storage {storageHours(state)}h</span>
+          <span>{fill.toFixed(0)}% full</span>
+        </div>
+        <div className="mt-2 h-1 rounded-full bg-white/20">
+          <div className="h-1 rounded-full bg-blue-700" style={{ width: `${fill}%` }} />
+        </div>
 
-      <Link to="/ai" className="surface block rounded-2xl p-4">
+        <div className="mt-5 flex items-center justify-between">
+          <div>
+            <p className="text-xs text-foreground/60">Ready to collect</p>
+            <p className="text-2xl tracking-tight">{formatNumber(ready)}</p>
+          </div>
+          <Equalizer />
+        </div>
+
+        <button
+          onClick={onCollect}
+          className="mt-5 w-full rounded-xl bg-white px-7 py-2.5 text-sm text-gray-900 transition-transform duration-200 hover:scale-105 active:scale-95"
+        >
+          Collect earnings
+        </button>
+      </section>
+
+      <section className="liquid-glass animate-fade-up delay-3 rounded-2xl p-2.5 pr-4">
         <div className="flex items-center gap-3">
-          <div
-            className="size-14 shrink-0 overflow-hidden rounded-xl brand-gradient bg-cover bg-center"
-            style={track?.coverUrl ? { backgroundImage: `url(${track.coverUrl})` } : undefined}
-          />
-          <div className="flex-1">
-            <p className="text-sm font-bold">
-              {track ? track.title : "ولّد تراك اليوم بالذكاء الاصطناعي"}
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-700">
+            <BarChart3 size={20} strokeWidth={2.5} />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm">
+              {track ? track.title : "No active AI track"}
             </p>
-            <p className="text-[11px] text-muted-foreground">
-              {track
-                ? `بونص +${track.bonusPct}% • ينتهي بعد ${Math.max(
-                    0,
-                    Math.round((track.expiresAt - now) / 3_600_000),
-                  )} ساعة`
-                : "تراك واحد مجاني يوميًا يمنحك بونص تعدين مؤقت"}
+            <p className="text-[11px] text-foreground/60">
+              {track ? `${track.genre} · +${track.bonusPct}% mining bonus` : "Generate one for a 24h bonus"}
             </p>
           </div>
-          <span className="text-primary">›</span>
+          <button
+            onClick={() => setLiked((v) => !v)}
+            aria-label="Like track"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white shadow-lg transition-transform duration-200 hover:scale-110 active:scale-95"
+          >
+            <Heart size={16} className={liked ? "fill-blue-700 text-blue-700" : "text-blue-700"} />
+          </button>
         </div>
-      </Link>
+      </section>
 
-      <Link to="/studio" className="brand-gradient block rounded-2xl p-4 text-center font-bold text-primary-foreground">
-        رقّي آلاتك وزوّد التعدين 🎛️
-      </Link>
-    </div>
-  );
-}
+      <div className="animate-fade-up delay-4 grid grid-cols-2 gap-3">
+        <Link
+          to="/studio"
+          className="liquid-glass rounded-xl px-7 py-2.5 text-center text-sm transition-transform duration-200 hover:scale-105 active:scale-95"
+        >
+          Upgrade rig
+        </Link>
+        <Link
+          to="/ai"
+          className="flex items-center justify-center gap-2 rounded-xl bg-white px-7 py-2.5 text-sm text-gray-900 transition-transform duration-200 hover:scale-105 active:scale-95"
+        >
+          <Sparkles size={14} strokeWidth={2} /> Make a track
+        </Link>
+      </div>
 
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="surface rounded-2xl p-3 text-center">
-      <p className="text-[10px] text-muted-foreground">{label}</p>
-      <p className="mt-1 text-sm font-bold">{value}</p>
+      {!isPremium(state) && (
+        <Link
+          to="/shop"
+          className="animate-fade-up delay-5 block rounded-xl bg-blue-700 px-5 py-3 text-center text-sm transition-transform duration-200 hover:scale-105 active:scale-95"
+        >
+          Get Premium — 2x mining, 24h storage
+        </Link>
+      )}
     </div>
   );
 }
