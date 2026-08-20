@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useRef, useState } from "react";
+import { Play, Sparkles, Square } from "lucide-react";
 import { toast } from "sonner";
 import { useGame } from "@/hooks/useGame";
 import { TrackPlayer, type Composition } from "@/lib/synth";
@@ -8,25 +9,25 @@ import { formatNumber, isPremium, type Track } from "@/lib/game";
 export const Route = createFileRoute("/ai")({
   head: () => ({
     meta: [
-      { title: "استوديو الذكاء الاصطناعي | Music AI" },
+      { title: "AI Studio | Music AI" },
       {
         name: "description",
-        content: "ولّد موسيقى وغلاف ألبوم بالذكاء الاصطناعي واحصل على بونص تعدين مؤقت.",
+        content: "Generate a track and cover art with AI and unlock a temporary mining bonus.",
       },
-      { property: "og:title", content: "استوديو الذكاء الاصطناعي | Music AI" },
-      { property: "og:description", content: "توليد تراك موسيقي وغلاف بالذكاء الاصطناعي داخل تليجرام." },
+      { property: "og:title", content: "AI Studio | Music AI" },
+      { property: "og:description", content: "AI music and cover generation inside Telegram." },
     ],
   }),
   component: AiPage,
 });
 
 const IDEAS = [
-  "لو-فاي هادي لليالي المطر",
-  "تراب عربي بإيقاع قوي",
-  "سينث ويف ثمانينات",
-  "بيانو حزين مع وتريات",
-  "إيقاع شعبي مصري حديث",
-  "أمبيانت فضائي للتركيز",
+  "Calm lo-fi for rainy nights",
+  "Hard-hitting trap beat",
+  "80s synthwave drive",
+  "Sad piano with strings",
+  "Modern folk groove",
+  "Ambient space focus",
 ];
 
 function AiPage() {
@@ -48,12 +49,12 @@ function AiPage() {
 
   async function generate() {
     if (!prompt.trim()) {
-      toast.error("اكتب وصف التراك أولًا");
+      toast.error("Describe the track first");
       return;
     }
     if (remaining <= 0) {
-      toast.error("خلص رصيدك اليومي من التوليد", {
-        description: "فعّل Premium للحصول على 5 تراكات يوميًا.",
+      toast.error("Daily generation limit reached", {
+        description: "Premium unlocks 5 tracks per day.",
       });
       return;
     }
@@ -62,7 +63,7 @@ function AiPage() {
     setComp(null);
     setCover(null);
     try {
-      setStep("جاري تلحين المقطوعة...");
+      setStep("Composing...");
       const res = await fetch("/api/ai/compose", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -70,12 +71,12 @@ function AiPage() {
       });
       if (!res.ok) {
         const err = (await res.json().catch(() => ({}))) as { error?: string };
-        throw new Error(err.error ?? `فشل التوليد (${res.status})`);
+        throw new Error(err.error ?? `Generation failed (${res.status})`);
       }
       const composition = (await res.json()) as Composition;
       setComp(composition);
 
-      setStep("جاري رسم الغلاف...");
+      setStep("Painting the cover...");
       let coverUrl: string | null = null;
       try {
         const coverRes = await fetch("/api/ai/cover", {
@@ -86,10 +87,12 @@ function AiPage() {
         if (coverRes.ok) {
           coverUrl = ((await coverRes.json()) as { url?: string }).url ?? null;
         } else {
-          toast.message("تم إنشاء الموسيقى بدون غلاف", { description: "خدمة الصور غير متاحة حاليًا." });
+          toast.message("Track created without a cover", {
+            description: "The image service is unavailable right now.",
+          });
         }
       } catch {
-        /* الغلاف اختياري */
+        /* cover is optional */
       }
       setCover(coverUrl);
 
@@ -107,9 +110,9 @@ function AiPage() {
       };
       addTrack(track);
       grant(500);
-      toast.success(`تم إنشاء "${composition.title}" • بونص +${bonusPct}% لمدة 24 ساعة`);
+      toast.success(`"${composition.title}" created · +${bonusPct}% bonus for 24h`);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "حدث خطأ غير متوقع");
+      toast.error(e instanceof Error ? e.message : "Something went wrong");
     } finally {
       setLoading(false);
       setStep("");
@@ -129,13 +132,12 @@ function AiPage() {
   }
 
   return (
-    <div className="space-y-4 pt-1">
-      <section className="surface rounded-3xl p-5">
-        <h1 className="text-lg font-black">
-          استوديو <span className="text-brand-gradient">الذكاء الاصطناعي</span>
-        </h1>
-        <p className="mt-1 text-xs text-muted-foreground">
-          اوصف المزاج والنوع، والذكاء الاصطناعي يلحّن التراك ويرسم الغلاف. كل تراك يمنحك بونص تعدين 24 ساعة.
+    <div className="space-y-3">
+      <section className="liquid-glass animate-fade-up delay-1 rounded-2xl p-5">
+        <h1 className="text-lg tracking-tight">AI Studio</h1>
+        <p className="mt-1 text-xs text-foreground/60">
+          Describe a genre and mood. The AI composes the track and paints the cover — each track adds a
+          24-hour mining bonus.
         </p>
 
         <textarea
@@ -143,8 +145,8 @@ function AiPage() {
           onChange={(e) => setPrompt(e.target.value)}
           maxLength={200}
           rows={3}
-          placeholder="مثال: لو-فاي هادي مع بيانو وإيقاع خفيف..."
-          className="mt-3 w-full resize-none rounded-2xl bg-secondary p-3 text-sm outline-none ring-primary/50 focus:ring-2"
+          placeholder="e.g. calm lo-fi with soft piano and light drums"
+          className="glass-thin mt-3 w-full resize-none rounded-xl p-3 text-sm outline-none placeholder:text-foreground/40 focus:ring-2 focus:ring-blue-700"
         />
 
         <div className="mt-2 flex flex-wrap gap-1.5">
@@ -152,7 +154,7 @@ function AiPage() {
             <button
               key={i}
               onClick={() => setPrompt(i)}
-              className="rounded-full bg-secondary px-3 py-1 text-[11px] text-muted-foreground"
+              className="glass-thin rounded-lg px-3 py-1 text-[11px] text-foreground/70 transition-transform duration-200 active:scale-95"
             >
               {i}
             </button>
@@ -162,40 +164,42 @@ function AiPage() {
         <button
           onClick={generate}
           disabled={loading}
-          className="brand-gradient mt-4 w-full rounded-2xl py-3 text-sm font-black text-primary-foreground disabled:opacity-60"
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-white py-2.5 text-sm text-gray-900 transition-transform duration-200 hover:scale-105 active:scale-95 disabled:opacity-60"
         >
-          {loading ? step || "جاري التوليد..." : "🎵 ولّد التراك"}
+          <Sparkles size={14} strokeWidth={2} />
+          {loading ? step || "Generating..." : "Generate track"}
         </button>
-        <p className="mt-2 text-center text-[11px] text-muted-foreground">
-          متبقٍ لك اليوم: {remaining} من {dailyLimit}
-          {!premium && " • Premium يمنحك 5 يوميًا"}
+        <p className="mt-2 text-center text-[11px] text-foreground/60">
+          {remaining} of {dailyLimit} left today
+          {!premium && " · Premium gives 5 per day"}
         </p>
       </section>
 
       {comp && (
-        <section className="surface overflow-hidden rounded-3xl">
+        <section className="liquid-glass animate-fade-up overflow-hidden rounded-2xl">
           <div
-            className="brand-gradient aspect-square w-full bg-cover bg-center"
+            className="aspect-square w-full bg-blue-700 bg-cover bg-center"
             style={cover ? { backgroundImage: `url(${cover})` } : undefined}
           />
           <div className="p-4">
-            <p className="text-base font-black">{comp.title}</p>
-            <p className="text-[11px] text-muted-foreground">
-              {comp.genre} • {comp.mood} • {comp.bpm} BPM • {comp.key}
+            <p className="text-base tracking-tight">{comp.title}</p>
+            <p className="text-[11px] text-foreground/60">
+              {comp.genre} · {comp.mood} · {comp.bpm} BPM · {comp.key}
             </p>
-            {comp.description && <p className="mt-2 text-xs">{comp.description}</p>}
+            {comp.description && <p className="mt-2 text-xs text-foreground/80">{comp.description}</p>}
             <div className="mt-2 flex flex-wrap gap-1.5">
               {comp.chords.map((c, i) => (
-                <span key={`${c}-${i}`} className="rounded-lg bg-secondary px-2 py-1 text-[11px] font-bold">
+                <span key={`${c}-${i}`} className="glass-thin rounded-lg px-2 py-1 text-[11px]">
                   {c}
                 </span>
               ))}
             </div>
             <button
               onClick={togglePlay}
-              className="mt-3 w-full rounded-xl bg-secondary py-2.5 text-sm font-bold"
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-700 py-2.5 text-sm transition-transform duration-200 hover:scale-105 active:scale-95"
             >
-              {playing ? "⏹ إيقاف" : "▶️ تشغيل التراك"}
+              {playing ? <Square size={14} strokeWidth={2} /> : <Play size={14} strokeWidth={2} />}
+              {playing ? "Stop" : "Play track"}
             </button>
           </div>
         </section>
@@ -203,29 +207,29 @@ function AiPage() {
 
       {state.tracks.length > 0 && (
         <section className="space-y-2">
-          <h2 className="px-1 text-sm font-bold">مكتبة تراكاتك</h2>
+          <h2 className="px-1 text-sm text-foreground/70">Your library</h2>
           {state.tracks.map((t) => (
-            <div key={t.id} className="surface flex items-center gap-3 rounded-2xl p-3">
+            <div key={t.id} className="liquid-glass flex items-center gap-3 rounded-2xl p-3">
               <div
-                className="brand-gradient size-12 shrink-0 rounded-xl bg-cover bg-center"
+                className="h-12 w-12 shrink-0 rounded-xl bg-blue-700 bg-cover bg-center"
                 style={t.coverUrl ? { backgroundImage: `url(${t.coverUrl})` } : undefined}
               />
-              <div className="flex-1">
-                <p className="text-sm font-bold">{t.title}</p>
-                <p className="text-[11px] text-muted-foreground">
-                  {t.genre} • بونص +{t.bonusPct}%
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm">{t.title}</p>
+                <p className="text-[11px] text-foreground/60">
+                  {t.genre} · +{t.bonusPct}% bonus
                 </p>
               </div>
-              <span className="text-[11px] text-gold">
-                {t.expiresAt > Date.now() ? "نشط" : "منتهي"}
+              <span className="text-[11px] text-foreground/60">
+                {t.expiresAt > Date.now() ? "Active" : "Expired"}
               </span>
             </div>
           ))}
         </section>
       )}
 
-      <p className="pb-2 text-center text-[11px] text-muted-foreground">
-        رصيدك: {formatNumber(state.balance)} MUSIC
+      <p className="pb-2 text-center text-[11px] text-foreground/60">
+        Balance: {formatNumber(state.balance)} MUSIC
       </p>
     </div>
   );
