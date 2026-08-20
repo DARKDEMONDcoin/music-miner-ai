@@ -122,6 +122,39 @@ function MinePage() {
         </button>
       </section>
 
+      <section className="animate-fade-up delay-3 grid grid-cols-2 gap-3">
+        {[
+          { m: gramMiner, icon: Gem, balance: state.gram, ready: gramReady },
+          { m: usdtMiner, icon: DollarSign, balance: state.usdt, ready: usdtReady },
+        ].map(({ m, icon: Icon, balance, ready: pend }) => {
+          const level = state.minerLevels[m.id] ?? 0;
+          return (
+            <Link
+              key={m.id}
+              to="/studio"
+              className="liquid-glass rounded-2xl p-4 transition-transform duration-200 active:scale-95"
+            >
+              <div className="flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-700">
+                  <Icon size={15} strokeWidth={2} />
+                </div>
+                <span className="text-xs text-foreground/70">{m.symbol}</span>
+              </div>
+              <p className="mt-3 text-xl tracking-tight">{formatCrypto(balance)}</p>
+              {level > 0 ? (
+                <p className="mt-1 text-[10px] text-foreground/60">
+                  +{formatCrypto(pend)} ready · {formatCrypto(minerRate(state, m))}/hr
+                </p>
+              ) : (
+                <p className="mt-1 text-[10px] text-foreground/60">Tap to unlock mining</p>
+              )}
+            </Link>
+          );
+        })}
+      </section>
+
+
+
       <section className="liquid-glass animate-fade-up delay-3 rounded-2xl p-2.5 pr-4">
         <div className="flex items-center gap-3">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-700">
