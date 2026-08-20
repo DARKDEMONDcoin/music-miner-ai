@@ -195,7 +195,7 @@ function MinePage() {
 
       {!isPremium(state) && (
         <Link
-          to="/shop"
+          to="/studio"
           className="animate-fade-up delay-5 block rounded-xl bg-blue-700 px-5 py-3 text-center text-sm transition-transform duration-200 hover:scale-105 active:scale-95"
         >
           Get Premium — 2x mining, 24h storage

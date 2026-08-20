@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { INSTRUMENTS, MINERS, minerUpgradeCost, starsForCost, upgradeCost } from "@/lib/game";
 
 const ITEMS: Record<string, { title: string; desc: string; stars: number }> = {
   premium: { title: "Premium Pass — 30 days", desc: "2x mining, 24h storage, 5 AI tracks/day", stars: 250 },
