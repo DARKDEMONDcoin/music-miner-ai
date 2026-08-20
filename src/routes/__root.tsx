@@ -80,29 +80,29 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Music AI — عدّن عملة MUSIC داخل تليجرام" },
+      { title: "Music AI — Mine MUSIC inside Telegram" },
       {
         name: "description",
-        content: "استوديو موسيقي بالذكاء الاصطناعي: عدّن عملة MUSIC، رقّي آلاتك، وولّد تراكات يومية.",
+        content:
+          "An AI music studio mini app: mine MUSIC, upgrade instruments, and generate daily AI tracks.",
       },
-      { property: "og:title", content: "Music AI — عدّن عملة MUSIC" },
+      { property: "og:title", content: "Music AI — Mine MUSIC inside Telegram" },
       {
         property: "og:description",
-        content: "ميني آب تليجرام لتعدين عملة MUSIC مع توليد موسيقى وأغلفة بالذكاء الاصطناعي.",
+        content: "Telegram mini app for mining MUSIC with AI-generated tracks and covers.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap",
+        href: "https://db.onlinewebfonts.com/c/a64ff11d2c24584c767f6257e880dc65?family=Helvetica+Regular",
       },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
     ],
+
     scripts: [{ src: "https://telegram.org/js/telegram-web-app.js" }],
   }),
   shellComponent: RootShell,
