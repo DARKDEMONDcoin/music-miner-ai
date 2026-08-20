@@ -6983,6 +6983,57 @@ export type Database = {
         }
         Relationships: []
       }
+      music_bot_state: {
+        Row: {
+          autopost_enabled: boolean
+          day_index: number
+          id: string
+          last_post_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          autopost_enabled?: boolean
+          day_index?: number
+          id?: string
+          last_post_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          autopost_enabled?: boolean
+          day_index?: number
+          id?: string
+          last_post_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      music_channel_posts: {
+        Row: {
+          day_index: number
+          id: string
+          image_url: string | null
+          message_id: number | null
+          posted_at: string
+          title: string
+        }
+        Insert: {
+          day_index: number
+          id?: string
+          image_url?: string | null
+          message_id?: number | null
+          posted_at?: string
+          title: string
+        }
+        Update: {
+          day_index?: number
+          id?: string
+          image_url?: string | null
+          message_id?: number | null
+          posted_at?: string
+          title?: string
+        }
+        Relationships: []
+      }
       notification_preferences: {
         Row: {
           app_credits: boolean
