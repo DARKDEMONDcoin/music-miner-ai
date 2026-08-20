@@ -1,0 +1,45 @@
+import { createFileRoute } from "@tanstack/react-router";
+
+const ITEMS: Record<string, { title: string; desc: string; stars: number }> = {
+  premium: { title: "Premium Pass — 30 days", desc: "2x mining, 24h storage, 5 AI tracks/day", stars: 250 },
+  booster: { title: "3x Booster — 8 hours", desc: "Triple your mining rate for 8 hours", stars: 75 },
+  tracks10: { title: "10 AI track pack", desc: "Extra AI generations", stars: 100 },
+  coins: { title: "250,000 MUSIC bag", desc: "Instant coins for upgrades", stars: 400 },
+  mega: { title: "Seasonal Mega Bundle", desc: "Premium + week booster + 1,000,000 MUSIC", stars: 2500 },
+};
+
+/** Creates a Telegram Stars invoice link (XTR) for a shop item. */
+export const Route = createFileRoute("/api/telegram/invoice")({
+  server: {
+    handlers: {
+      POST: async ({ request }) => {
+        const token = process.env["TELEGRAM_BOT_TOKEN"];
+        if (!token) {
+          return Response.json({ error: "TELEGRAM_BOT_TOKEN is not configured" }, { status: 503 });
+        }
+
+        const { itemId } = (await request.json()) as { itemId?: string };
+        const item = itemId ? ITEMS[itemId] : undefined;
+        if (!item) return Response.json({ error: "Unknown item" }, { status: 400 });
+
+        const res = await fetch(`https://api.telegram.org/bot${token}/createInvoiceLink`, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            title: item.title,
+            description: item.desc,
+            payload: `music-ai:${itemId}:${Date.now()}`,
+            currency: "XTR",
+            prices: [{ label: item.title, amount: item.stars }],
+          }),
+        });
+
+        const data = (await res.json()) as { ok: boolean; result?: string; description?: string };
+        if (!data.ok || !data.result) {
+          return Response.json({ error: data.description ?? "Telegram error" }, { status: 502 });
+        }
+        return Response.json({ link: data.result });
+      },
+    },
+  },
+});
