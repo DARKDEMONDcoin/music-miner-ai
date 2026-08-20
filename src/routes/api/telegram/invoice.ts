@@ -5,6 +5,8 @@ const ITEMS: Record<string, { title: string; desc: string; stars: number }> = {
   booster: { title: "3x Booster — 8 hours", desc: "Triple your mining rate for 8 hours", stars: 75 },
   tracks10: { title: "10 AI track pack", desc: "Extra AI generations", stars: 100 },
   coins: { title: "250,000 MUSIC bag", desc: "Instant coins for upgrades", stars: 400 },
+  "gram-rig": { title: "GRAM Extractor — 5 levels", desc: "Instant 5 levels of GRAM mining", stars: 900 },
+  "usdt-rig": { title: "USDT Rig — 5 levels", desc: "Instant 5 levels of USDT mining", stars: 1400 },
   mega: { title: "Seasonal Mega Bundle", desc: "Premium + week booster + 1,000,000 MUSIC", stars: 2500 },
 };
 

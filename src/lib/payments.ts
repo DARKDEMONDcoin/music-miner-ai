@@ -1,17 +1,24 @@
 import type { LucideIcon } from "lucide-react";
-import { Coins, Crown, Gem, Music4, Rocket } from "lucide-react";
+import { Coins, Crown, DollarSign, Gem, Music4, Rocket } from "lucide-react";
 
 /** Project TON wallet that receives every on-chain payment. */
 export const TON_WALLET = "UQAp1QxnLJ2z44IooUovvtVShw7hJBEdxCRV3RlbCYC3D8qj";
 
-export type ShopItemId = "premium" | "booster" | "tracks10" | "coins" | "mega";
+export type ShopItemId =
+  | "premium"
+  | "booster"
+  | "tracks10"
+  | "coins"
+  | "gram-rig"
+  | "usdt-rig"
+  | "mega";
 
 export type ShopItem = {
   id: ShopItemId;
   title: string;
   desc: string;
   stars: number;
-  ton: number;
+  ton: number; // priced in GRAM (TON network coin)
   icon: LucideIcon;
   highlight?: boolean;
 };
@@ -51,9 +58,25 @@ export const SHOP_ITEMS: ShopItem[] = [
     icon: Coins,
   },
   {
+    id: "gram-rig",
+    title: "GRAM Extractor — 5 levels",
+    desc: "Instantly jump 5 levels of GRAM mining.",
+    stars: 900,
+    ton: 4.2,
+    icon: Gem,
+  },
+  {
+    id: "usdt-rig",
+    title: "USDT Rig — 5 levels",
+    desc: "Instantly jump 5 levels of stable USDT mining.",
+    stars: 1400,
+    ton: 6.5,
+    icon: DollarSign,
+  },
+  {
     id: "mega",
     title: "Seasonal Mega Bundle",
-    desc: "Premium + one week booster + 1,000,000 MUSIC.",
+    desc: "Premium + week booster + 1,000,000 MUSIC + 3 GRAM rig levels.",
     stars: 2500,
     ton: 11.5,
     icon: Gem,
