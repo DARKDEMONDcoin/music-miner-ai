@@ -106,13 +106,14 @@ function UpgradesTab() {
     id: string,
     cost: number,
     name: string,
+    level: number,
   ) => {
     setBusy(`${id}-stars`);
     try {
       const res = await fetch("/api/telegram/invoice", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ itemId: "upgrade", upgradeKind: kind, upgradeId: id, level: cost }),
+        body: JSON.stringify({ itemId: "upgrade", upgradeKind: kind, upgradeId: id, level }),
       });
       const data = (await res.json()) as { link?: string; error?: string };
       if (!res.ok || !data.link) {
@@ -200,7 +201,7 @@ function UpgradesTab() {
               </button>
               <button
                 disabled={busy === `${inst.id}-stars`}
-                onClick={() => buyWithStars("instrument", inst.id, cost, inst.name)}
+                onClick={() => buyWithStars("instrument", inst.id, cost, inst.name, level)}
                 className="flex items-center justify-center gap-1.5 rounded-xl bg-white py-2 text-xs text-gray-900 transition-transform duration-200 active:scale-95 disabled:opacity-50"
               >
                 {busy === `${inst.id}-stars` ? (
@@ -277,7 +278,7 @@ function UpgradesTab() {
               </button>
               <button
                 disabled={busy === `${m.id}-stars`}
-                onClick={() => buyWithStars("miner", m.id, cost, m.name)}
+                onClick={() => buyWithStars("miner", m.id, cost, m.name, level)}
                 className="flex items-center justify-center gap-1.5 rounded-xl bg-white py-2 text-xs text-gray-900 transition-transform duration-200 active:scale-95 disabled:opacity-50"
               >
                 {busy === `${m.id}-stars` ? (
