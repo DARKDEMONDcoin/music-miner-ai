@@ -77,13 +77,18 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const collect = useCallback(() => {
-    let gained = 0;
+    let gained = { music: 0, gram: 0, usdt: 0 };
     setState((s) => {
-      gained = pending(s);
-      if (gained <= 0) return s;
+      const music = pending(s);
+      const gram = minerPending(s, MINERS[0]!);
+      const usdt = minerPending(s, MINERS[1]!);
+      if (music <= 0 && gram <= 0 && usdt <= 0) return s;
+      gained = { music, gram, usdt };
       return {
         ...s,
-        balance: s.balance + gained,
+        balance: s.balance + music,
+        gram: s.gram + gram,
+        usdt: s.usdt + usdt,
         lastCollectAt: Date.now(),
         collectsToday: s.collectsToday + 1,
       };
@@ -108,6 +113,25 @@ export function GameProvider({ children }: { children: ReactNode }) {
     });
     return ok;
   }, []);
+
+  const upgradeMiner = useCallback((id: MinerId) => {
+    let ok = false;
+    setState((s) => {
+      const miner = MINERS.find((m) => m.id === id);
+      if (!miner) return s;
+      const level = s.minerLevels[id] ?? 0;
+      const cost = minerUpgradeCost(miner, level);
+      if (s.balance < cost) return s;
+      ok = true;
+      return {
+        ...s,
+        balance: s.balance - cost,
+        minerLevels: { ...s.minerLevels, [id]: level + 1 },
+      };
+    });
+    return ok;
+  }, []);
+
 
   const claimTask = useCallback((id: string, reward: number) => {
     setState((s) =>
