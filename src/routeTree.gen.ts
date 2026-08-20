@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AiRouteImport } from './routes/ai'
 import { Route as ReferralRouteImport } from './routes/referral'
+import { Route as ShopRouteImport } from './routes/shop'
 import { Route as StudioRouteImport } from './routes/studio'
 import { Route as TasksRouteImport } from './routes/tasks'
 import { Route as ApiAiComposeRouteImport } from './routes/api/ai/compose'
@@ -21,9 +23,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AiRoute = AiRouteImport.update({
+  id: '/ai',
+  path: '/ai',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ReferralRoute = ReferralRouteImport.update({
   id: '/referral',
   path: '/referral',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShopRoute = ShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StudioRoute = StudioRouteImport.update({
@@ -49,7 +61,9 @@ const ApiAiCoverRoute = ApiAiCoverRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ai': typeof AiRoute
   '/referral': typeof ReferralRoute
+  '/shop': typeof ShopRoute
   '/studio': typeof StudioRoute
   '/tasks': typeof TasksRoute
   '/api/ai/compose': typeof ApiAiComposeRoute
@@ -57,7 +71,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ai': typeof AiRoute
   '/referral': typeof ReferralRoute
+  '/shop': typeof ShopRoute
   '/studio': typeof StudioRoute
   '/tasks': typeof TasksRoute
   '/api/ai/compose': typeof ApiAiComposeRoute
@@ -66,7 +82,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/ai': typeof AiRoute
   '/referral': typeof ReferralRoute
+  '/shop': typeof ShopRoute
   '/studio': typeof StudioRoute
   '/tasks': typeof TasksRoute
   '/api/ai/compose': typeof ApiAiComposeRoute
@@ -76,7 +94,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/ai'
     | '/referral'
+    | '/shop'
     | '/studio'
     | '/tasks'
     | '/api/ai/compose'
@@ -84,7 +104,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/ai'
     | '/referral'
+    | '/shop'
     | '/studio'
     | '/tasks'
     | '/api/ai/compose'
@@ -92,7 +114,9 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/ai'
     | '/referral'
+    | '/shop'
     | '/studio'
     | '/tasks'
     | '/api/ai/compose'
@@ -101,7 +125,9 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AiRoute: typeof AiRoute
   ReferralRoute: typeof ReferralRoute
+  ShopRoute: typeof ShopRoute
   StudioRoute: typeof StudioRoute
   TasksRoute: typeof TasksRoute
   ApiAiComposeRoute: typeof ApiAiComposeRoute
@@ -117,11 +143,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ai': {
+      id: '/ai'
+      path: '/ai'
+      fullPath: '/ai'
+      preLoaderRoute: typeof AiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/referral': {
       id: '/referral'
       path: '/referral'
       fullPath: '/referral'
       preLoaderRoute: typeof ReferralRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shop': {
+      id: '/shop'
+      path: '/shop'
+      fullPath: '/shop'
+      preLoaderRoute: typeof ShopRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/studio': {
@@ -157,7 +197,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AiRoute: AiRoute,
   ReferralRoute: ReferralRoute,
+  ShopRoute: ShopRoute,
   StudioRoute: StudioRoute,
   TasksRoute: TasksRoute,
   ApiAiComposeRoute: ApiAiComposeRoute,
