@@ -149,15 +149,22 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setState((s) => ({ ...s, balance: s.balance + amount }));
   }, []);
 
-  const buy = useCallback((kind: "premium" | "booster" | "coins", amount = 0) => {
-    setState((s) => {
-      if (kind === "premium")
-        return { ...s, premiumUntil: Math.max(s.premiumUntil, Date.now()) + 30 * 86_400_000 };
-      if (kind === "booster")
-        return { ...s, boosterUntil: Math.max(s.boosterUntil, Date.now()) + 8 * 3_600_000 };
-      return { ...s, balance: s.balance + amount };
-    });
-  }, []);
+  const buy = useCallback(
+    (kind: "premium" | "booster" | "coins" | "gram" | "usdt", amount = 0) => {
+      setState((s) => {
+        if (kind === "premium")
+          return { ...s, premiumUntil: Math.max(s.premiumUntil, Date.now()) + 30 * 86_400_000 };
+        if (kind === "booster")
+          return { ...s, boosterUntil: Math.max(s.boosterUntil, Date.now()) + 8 * 3_600_000 };
+        if (kind === "gram")
+          return { ...s, minerLevels: { ...s.minerLevels, gram: (s.minerLevels["gram"] ?? 0) + amount } };
+        if (kind === "usdt")
+          return { ...s, minerLevels: { ...s.minerLevels, usdt: (s.minerLevels["usdt"] ?? 0) + amount } };
+        return { ...s, balance: s.balance + amount };
+      });
+    },
+    [],
+  );
 
   const addReferral = useCallback(() => {
     setState((s) => ({ ...s, referrals: s.referrals + 1, balance: s.balance + 1000 }));
@@ -166,9 +173,36 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const reset = useCallback(() => setState(initialState()), []);
 
   const value = useMemo(
-    () => ({ state, now, ready, collect, upgrade, claimTask, addTrack, grant, buy, addReferral, reset }),
-    [state, now, ready, collect, upgrade, claimTask, addTrack, grant, buy, addReferral, reset],
+    () => ({
+      state,
+      now,
+      ready,
+      collect,
+      upgrade,
+      upgradeMiner,
+      claimTask,
+      addTrack,
+      grant,
+      buy,
+      addReferral,
+      reset,
+    }),
+    [
+      state,
+      now,
+      ready,
+      collect,
+      upgrade,
+      upgradeMiner,
+      claimTask,
+      addTrack,
+      grant,
+      buy,
+      addReferral,
+      reset,
+    ],
   );
+
 
   return <GameCtx.Provider value={value}>{children}</GameCtx.Provider>;
 }
