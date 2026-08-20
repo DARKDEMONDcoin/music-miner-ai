@@ -10,12 +10,30 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ReferralRouteImport } from './routes/referral'
+import { Route as StudioRouteImport } from './routes/studio'
+import { Route as TasksRouteImport } from './routes/tasks'
 import { Route as ApiAiComposeRouteImport } from './routes/api/ai/compose'
 import { Route as ApiAiCoverRouteImport } from './routes/api/ai/cover'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReferralRoute = ReferralRouteImport.update({
+  id: '/referral',
+  path: '/referral',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudioRoute = StudioRouteImport.update({
+  id: '/studio',
+  path: '/studio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TasksRoute = TasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAiComposeRoute = ApiAiComposeRouteImport.update({
@@ -31,30 +49,61 @@ const ApiAiCoverRoute = ApiAiCoverRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/referral': typeof ReferralRoute
+  '/studio': typeof StudioRoute
+  '/tasks': typeof TasksRoute
   '/api/ai/compose': typeof ApiAiComposeRoute
   '/api/ai/cover': typeof ApiAiCoverRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/referral': typeof ReferralRoute
+  '/studio': typeof StudioRoute
+  '/tasks': typeof TasksRoute
   '/api/ai/compose': typeof ApiAiComposeRoute
   '/api/ai/cover': typeof ApiAiCoverRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/referral': typeof ReferralRoute
+  '/studio': typeof StudioRoute
+  '/tasks': typeof TasksRoute
   '/api/ai/compose': typeof ApiAiComposeRoute
   '/api/ai/cover': typeof ApiAiCoverRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/ai/compose' | '/api/ai/cover'
+  fullPaths:
+    | '/'
+    | '/referral'
+    | '/studio'
+    | '/tasks'
+    | '/api/ai/compose'
+    | '/api/ai/cover'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/ai/compose' | '/api/ai/cover'
-  id: '__root__' | '/' | '/api/ai/compose' | '/api/ai/cover'
+  to:
+    | '/'
+    | '/referral'
+    | '/studio'
+    | '/tasks'
+    | '/api/ai/compose'
+    | '/api/ai/cover'
+  id:
+    | '__root__'
+    | '/'
+    | '/referral'
+    | '/studio'
+    | '/tasks'
+    | '/api/ai/compose'
+    | '/api/ai/cover'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ReferralRoute: typeof ReferralRoute
+  StudioRoute: typeof StudioRoute
+  TasksRoute: typeof TasksRoute
   ApiAiComposeRoute: typeof ApiAiComposeRoute
   ApiAiCoverRoute: typeof ApiAiCoverRoute
 }
@@ -66,6 +115,27 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/referral': {
+      id: '/referral'
+      path: '/referral'
+      fullPath: '/referral'
+      preLoaderRoute: typeof ReferralRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/studio': {
+      id: '/studio'
+      path: '/studio'
+      fullPath: '/studio'
+      preLoaderRoute: typeof StudioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tasks': {
+      id: '/tasks'
+      path: '/tasks'
+      fullPath: '/tasks'
+      preLoaderRoute: typeof TasksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/ai/compose': {
@@ -87,6 +157,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ReferralRoute: ReferralRoute,
+  StudioRoute: StudioRoute,
+  TasksRoute: TasksRoute,
   ApiAiComposeRoute: ApiAiComposeRoute,
   ApiAiCoverRoute: ApiAiCoverRoute,
 }
